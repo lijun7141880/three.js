@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <title>交流测试仪</title>
     <script type="text/javascript" src="../build/three.js"></script>
+    <script type="text/javascript" src="./js/loaders/DDSLoader.js"></script>
     <script type="text/javascript" src="./js/loaders/MTLLoader.js"></script>
-    <script type="text/javascript" src="./js/loaders/OBJMTLLoader.js"></script>
+    <script type="text/javascript" src="./js/loaders/OBJLoader.js"></script>
     <script type="text/javascript" src="./js/controls/TrackballControls.js"></script>
     <script type="text/javascript" src="./js/libs/jquery-1.11.0.min.js"></script>
     <script type="text/javascript">
@@ -65,15 +66,20 @@
                 //
                 //
                 // scene.add(mesh);
+                THREE.Loader.Handlers.add(/\.dds$/i, new THREE.DDSLoader());
+                var mtlLoader = new THREE.MTLLoader();
+                mtlLoader.setPath('./obj/jiaoliuceshiyi/');
+                mtlLoader.load('jiaoliuceshiyi.mtl', function ( materials ) {
+                            materials.preload();
 
-                var loader = new THREE.OBJMTLLoader();
-                console.dir(loader)
-                loader.addEventListener('load', function (event) {
-                    var obj = event.content;
-                    mesh = obj;
-                    scene.add(obj);
-                });
-                loader.load('./obj/jiaoliuceshiyi/jiaoliuceshiyi.obj', './obj/jiaoliuceshiyi/jiaoliuceshiyi.mtl');
+                    var objLoader = new THREE.OBJLoader();
+                        objLoader.setMaterials(materials);
+                        objLoader.setPath('./obj/jiaoliuceshiyi/');
+                    objLoader.load('jiaoliuceshiyi.obj', function ( object ) {
+
+                        scene.add( object );
+                            });
+                        });
 
                 renderer = new THREE.WebGLRenderer({antialias: true});
                 renderer.setSize(window.innerWidth, window.innerHeight);
